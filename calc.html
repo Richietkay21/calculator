@@ -1,0 +1,219 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin:auto;
+        }
+        body{
+            overflow: none;
+            background: linear-gradient(to right,skyblue,pink);
+        }
+        #container{
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            width:250px;
+            background-color:rgb(241, 216, 75);
+        }
+        #container div{
+            cursor: pointer;
+            background-color:rgb(141, 214, 219);
+            margin: 10 10px;
+            width: 60px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            color:black;
+        }
+
+        button{
+            cursor: pointer;
+            background-color:rgb(141, 214, 211);
+            margin: 10 10px;
+            width: 60px;
+            text-align: center;
+            color:white;
+        }
+        #screen{
+            width: 250px;
+            min-height: 100px;
+            max-height: auto;
+            background-color: rgb(80, 71, 21);
+            display:flex;
+            flex-wrap: wrap;
+            word-break: break;
+            justify-content: flex-end;
+            align-content: flex-end;
+            justify-items: flex-end;
+            align-items: flex-end;
+            word-wrap: break-word;
+            color: white;
+
+        }
+        .screen1{
+          padding: 5 10px;
+          width:250px;
+          min-height: 20px;
+          max-height: fit-content;
+          text-align: right;
+          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif, Verdana, sans-serif;
+          font-size: medium;
+        }
+        .screen2{
+          padding: 5 10px;
+          width: 250px;
+          min-height: 20px;
+          max-height: fit-content;
+          text-align: right;          
+          font-family: 'Lucida Sans',Arial, Helvetica, sans-serif, Times, serif;
+         font-size: large;
+        
+        }
+
+    </style>
+</head>
+<body>
+    <div id="container">
+          <span id="screen">
+              <span data-previousDisplay class="screen1"></span>
+              <span data-currentDisplay class="screen2"></span>
+          </span>
+       <div class="number1" data-numbers>1</div>
+       <div class="number2" data-numbers>2</div>
+       <div class="number3" data-numbers>3</div>
+       <div class="number4" data-numbers>4</div>
+       <div class="number5" data-numbers>5</div>
+       <div class="number6" data-numbers>6</div>
+       <div class="number7" data-numbers>7</div>
+       <div class="number8" data-numbers>8</div>
+       <div class="number9" data-numbers>9</div>
+       <div data-numbers class="comma">.</div>
+        <div class="number0" data-numbers> 0</div>
+        <button data-equalsOperation>=</button> 
+            <div data-operation  id="add">+</div>
+            <div data-operation id="sub">-</div>   
+            <div id="del" data-delete-number>del</div>           
+            <div  data-operation id="mult"><small>x</small></div>
+            <div data-operation id="div">/</div>
+           
+            <div data-clearAll  class="clearAll">AC</div>
+        
+        
+        
+    </div>  
+
+<script>
+    class Calculator{
+        constructor(previousDisplay,currentDisplay){
+            this.previousDisplay = previousDisplay;
+            this.currentDisplay = currentDisplay;
+            this.clear()
+        }
+        clear(){ 
+           this.previousOperand =''
+           this.currentOperand =''
+           this.operation = '' 
+        }
+        delete(){
+            this.currentOperand = this.currentOperand.toString().slice(0,-1)
+        }
+
+        operations(operation){
+            if(this.currentOperand=="" )return
+            if(this.previousOperand!=""){
+                this.compute()
+            }
+            this.operation = operation
+            this.previousOperand = this.currentOperand
+            this.currentOperand =''
+       
+        }
+
+           
+        appendNumber(number){
+            if(number ==='.' && this.currentOperand.includes('.')){return}
+  
+            this.currentOperand= this.currentOperand.toString() +  number.toString()
+           
+        }
+
+        compute(){
+            let result;
+            const prev = parseFloat(this.previousOperand)
+            const current = parseInt(this.currentOperand)
+            if(isNaN(prev) || isNaN(current))return
+            switch(this.operation){
+                case '+':
+                    result = prev+current
+                    break
+                case '-':
+                    result = prev-current
+                    break
+                case 'x':
+                    result = prev*current
+                    break
+                case '/':
+                    result = prev/current
+                    break
+                default :
+                    return
+            }
+            this.currentOperand = result
+            this.operation=''
+            this.previousOperand=''              
+        }
+
+        display(){
+            this.currentDisplay.innerText = `${this.currentOperand}`
+            if(this.operation !== null){           
+                this.previousDisplay.innerText = `${this.previousOperand} ${this.operation}   `
+        
+            }
+        }    
+    }
+     const delButton = document.querySelector('[data-delete-number]');
+     const numberButtons = document.querySelectorAll('[data-numbers]');
+     const operationButton = document.querySelectorAll('[data-operation]');
+     const clearButton = document.querySelector('[data-clearAll]');
+     const resultButton = document.querySelector('[data-equalsOperation]')
+     const previousDisplay =document.querySelector('[data-previousDisplay]');
+     const currentDisplay =document.querySelector('[data-currentDisplay]');
+     
+    const calculator = new Calculator(previousDisplay,currentDisplay)
+     numberButtons.forEach(
+         button=>{
+            button.addEventListener('click',()=>{
+                 calculator.appendNumber(button.innerText)
+                 calculator.display()}
+                 )
+                }
+        )
+        clearButton.addEventListener('click',()=>{calculator.clear()
+        calculator.display()}) 
+
+        delButton.addEventListener('click',()=>{
+            calculator.delete()
+            calculator.display()}
+           ) 
+        operationButton.forEach(
+            operate=>{
+
+                operate.addEventListener('click',()=>{
+                calculator.operations(operate.innerText)
+                calculator.display()
+                })
+            }
+        )
+        resultButton.addEventListener('click',()=>{
+                  calculator.compute()
+                  calculator.display()
+                })      
+</script>
+</body>
+</html>
