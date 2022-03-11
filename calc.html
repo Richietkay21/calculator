@@ -171,9 +171,9 @@
         }
 
         display(){
-            this.currentDisplay.innerText = `${this.operation} ${this.currentOperand}`
+            this.currentDisplay.innerText = `${this.currentOperand}`
             if(this.operation !== null){           
-                this.previousDisplay.innerText = `${this.previousOperand}`
+                this.previousDisplay.innerText = `${this.previousOperand} ${this.operation} `
         
             }
         }    
